@@ -1,0 +1,10 @@
+{
+  "KAFKA_TOPICS": [
+    "t_release_flink"
+  ],
+  "KAFKA_PROPERTIES": {
+    "bootstrap.servers": "node242:9092,node243:9092,node244:9092",
+    "zookeeper.connect": "node242:2181,node243:2181,node244:2181/kafka",
+    "group.id": "t_release_flink_g1"
+  }
+}

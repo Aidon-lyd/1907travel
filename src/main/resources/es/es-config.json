@@ -1,0 +1,20 @@
+{
+  "config": {
+    "cluster.name": "bigdata",
+    "client.transport.sniff": true
+  },
+  "address": [
+    {
+      "ip": "hadoop01",
+      "port": 9300
+    },
+    {
+      "ip": "hadoop02",
+      "port": 9300
+    },
+    {
+      "ip": "hadoop03",
+      "port": 9300
+    }
+  ]
+}
