@@ -6,10 +6,10 @@ import org.apache.flink.streaming.api.watermark.Watermark
 
 
 /**
-  * 旅游产品订单业务事件时间辅助器
+  * 用户行为数据事件时间辅助器
   * @param maxOutOfOrderness 最大延迟时间
   */
-class OrdersPeriodicAssigner(maxOutOfOrderness :Long) extends AssignerWithPeriodicWatermarks[OrderDetailData]{
+class UserLogsAssigner(maxOutOfOrderness :Long) extends AssignerWithPeriodicWatermarks[UserLogData]{
 
   //当前时间戳
   var currentMaxTimestamp :Long = java.lang.Long.MIN_VALUE
@@ -36,11 +36,11 @@ class OrdersPeriodicAssigner(maxOutOfOrderness :Long) extends AssignerWithPeriod
     * @param previousElementTimestamp 之前数据的事件时间
     * @return
     */
-  override def extractTimestamp(element: OrderDetailData, previousElementTimestamp: Long): Long = {
+  override def extractTimestamp(element: UserLogData, previousElementTimestamp: Long): Long = {
     //事件时间设置
     val eventTime = element.ct
     currentMaxTimestamp = Math.max(eventTime, currentMaxTimestamp)
-
+    //返回
     eventTime
   }
 }
