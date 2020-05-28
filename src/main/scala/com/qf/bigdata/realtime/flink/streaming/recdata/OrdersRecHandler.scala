@@ -98,6 +98,7 @@ object OrdersRecHandler {
 
     //将sink添加到sink中
     ordersDetileDStream.addSink(orders_streamingsink)
+    ordersDetileDStream.print()
     //触发执行
     env.execute(appName)
   }
@@ -162,6 +163,7 @@ object OrdersRecHandler {
 
     //将sink添加到sink中
     order_detail_DStream.addSink(orders_streamingsink)
+    order_detail_DStream.print()
     //触发执行
     env.execute(appName)
   }
@@ -169,10 +171,20 @@ object OrdersRecHandler {
   def main(args: Array[String]): Unit = {
 
     //行数据输出测试
-    handleRow2Hdfs("order2hdfs",
-      "travel_orders_ods",
-      "order-group-id",
+    /*handleRow2Hdfs("order2hdfs",
+      "travel_order_ods",
+      "logs-group-id2",
       "hdfs://hadoop01:9000/travle/orders/",
+      60,
+      60,
+      128,
+      60)*/
+
+    //行数据输出测试
+    handleParquet2Hdfs("orderparquet2hdfs",
+      "travel_order_ods",
+      "logs-group-id3",
+      "hdfs://hadoop01:9000/travle/orders_parquet/",
       60,
       60,
       128,

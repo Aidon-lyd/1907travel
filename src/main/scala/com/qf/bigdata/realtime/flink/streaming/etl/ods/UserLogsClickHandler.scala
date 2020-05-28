@@ -7,6 +7,7 @@ import com.qf.bigdata.realtime.flink.streaming.funs.logs.UserLogClickDataFunc
 import com.qf.bigdata.realtime.flink.streaming.rdo.QRealtimeDO
 import com.qf.bigdata.realtime.flink.streaming.rdo.QRealtimeDO.UserLogData
 import com.qf.bigdata.realtime.flink.streaming.schema.UserLogsSchema
+import com.qf.bigdata.realtime.flink.streaming.sink.logs.UserLogClickESSink
 import com.qf.bigdata.realtime.flink.util.help.FlinkHelper
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
@@ -56,6 +57,14 @@ object UserLogsClickHandler {
       .map(new UserLogClickDataFunc)
 
     //编写ES的sink，，将结果数据打入es中即可
+    userLogClickDataDStream.addSink(new UserLogClickESSink(QRealTimeConstant.ES_INDEX_NAME_LOG_CLICK))
+    userLogClickDataDStream.print()
+    //触发执行
+    env.execute(appName)
+  }
 
+  def main(args: Array[String]): Unit = {
+    //测试
+    handleUserLogs2ES("userLogClick2ES","travel_logs_ods","log_groupid_1",QRealTimeConstant.ES_INDEX_NAME_LOG_CLICK)
   }
 }

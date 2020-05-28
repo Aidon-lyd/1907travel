@@ -38,7 +38,7 @@ object QRealtimeDO {
   case class UserLogPageViewData(sid:String,userDevice:String,userDeviceType:String,
                                  os:String,userId:String,userRegion:String,longitude:String,
                                  latitude:String,manufacturer:String,carrier:String,networkType:String,
-                                 duration:String,exts:String,action:String,eventType:String,
+                                 duration:String,action:String,eventType:String,
                                  ct:Long,targetId:String)
 
 
