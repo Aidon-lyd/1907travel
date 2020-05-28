@@ -379,7 +379,7 @@ object FlinkHelper {
       .print("flink-jdbc获取维度数据->")*/
 
     //kafka的消费测试
-    val res: DataStream[String] = env.addSource(createKafkaConsumer(env, "travel_order_ods", "logs-group-id1"))
+    val res: DataStream[String] = env.addSource(createKafkaConsumer(env, "travel_logs_ods", "logs-group-id1"))
     res.print("flink-kafka数据->")
 
     //触发执行

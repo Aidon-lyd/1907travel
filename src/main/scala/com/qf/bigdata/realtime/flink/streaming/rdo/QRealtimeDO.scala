@@ -88,7 +88,7 @@ object QRealtimeDO {
   case class UserLogViewListFactData(sid:String,userDevice:String,userDeviceType:String,
                                  os:String,userId:String,userRegion:String,longitude:String,
                                  latitude:String,manufacturer:String,carrier:String,networkType:String,
-                                 duration:String,exts:String,action:String,eventType:String,
+                                 duration:String,action:String,eventType:String,
                                  ct:Long,targetId:String,hotTarget:String,travelSend:String,
                                      travelSendTime:String,travelTime:String,productLevel:String,
                                      productType:String)

@@ -98,7 +98,7 @@ object UserLogsViewHandler {
       //需要枚举
       .filter((log: UserLogData) => {
         (log.action.equalsIgnoreCase(ActionEnum.PAGE_ENTER_H5.getCode)
-          && log.action.equalsIgnoreCase(ActionEnum.PAGE_ENTER_NATIVE.getCode))
+          || log.action.equalsIgnoreCase(ActionEnum.PAGE_ENTER_NATIVE.getCode))
       })
       //映射将userLogData中的ext数据提取出来
       .map(new UserLogViewDataMapFunc)
@@ -129,8 +129,8 @@ object UserLogsViewHandler {
 
   def main(args: Array[String]): Unit = {
     //打入es测试
-    handleUserLogs2ES("userLogClick2ES","travel_logs_ods","log_groupid_1",QRealTimeConstant.ES_INDEX_NAME_LOG_CLICK)
+    //handleUserLogs2ES("userLogClick2ES","travel_logs_ods","log_groupid_1",QRealTimeConstant.ES_INDEX_NAME_LOG_CLICK)
     //打入kafka测试
-    handleUserLogs2ES("userLogClick2ES","travel_logs_ods","log_groupid_1","travel_logs_pageview")
+    handleUserLogs2Kafka("userLogClick2ES","travel_logs_ods","log_groupid_1","travel_logs_pageview")
   }
 }
