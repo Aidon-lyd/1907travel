@@ -68,6 +68,7 @@ object QRealtimeCommFun {
     def reloadDB():Unit ={
       val dbResult = pool.execSQLJson(dbQuery.sql, dbQuery.schema, dbQuery.pk)
       if(useLocalCache){
+        //本地缓存
         localCache.putAll(dbResult)
       }else{
         val key = dbQuery.table
@@ -127,31 +128,43 @@ object QRealtimeCommFun {
         val orderProductID = input.productID
         var productInfo :String = ""
         if(useLocalCache){
+          //----本地缓存---1、如果查不到，读mysql   2、
           productInfo = localCache.getIfPresent(orderProductID)
         }else{
           val key = dbQuery.table
           val dataJson : util.Map[String,String] = redisCmd.hgetall(key)
           productInfo =  dataJson.getOrDefault(orderProductID,"")
         }
-        val productRow : util.Map[String,Object] = JsonUtil.json2object(productInfo, classOf[util.Map[String,Object]])
+        //如果缓存没有数据
+        if(StringUtils.isNotEmpty(productInfo)){
+          val productRow : util.Map[String,Object] = JsonUtil.json2object(productInfo, classOf[util.Map[String,Object]])
 
-        //product_id, product_level, product_type, departure_code, des_city_code, toursim_tickets_type
-        val productLevel = productRow.get("product_level").toString.toInt
-        val productType = productRow.get("product_type").toString
-        val depCode = productRow.get("departure_code").toString
-        val desCode = productRow.get("des_city_code").toString
-        val toursimType = productRow.get("toursim_tickets_type").toString
+          //product_id, product_level, product_type, departure_code, des_city_code, toursim_tickets_type
+          val productLevel = productRow.get("product_level").toString.toInt
+          val productType = productRow.get("product_type").toString
+          val depCode = productRow.get("departure_code").toString
+          val desCode = productRow.get("des_city_code").toString
+          val toursimType = productRow.get("toursim_tickets_type").toString
 
-        val orderWide = OrderWideData(input.orderID, input.userID, orderProductID, input.pubID,
-          input.userMobile, input.userRegion, input.traffic, input.trafficGrade, input.trafficType,
-          input.price, input.fee, input.hasActivity,
-          input.adult, input.yonger, input.baby, input.ct,
-          productLevel, productType, toursimType, depCode, desCode)
-        println(s"""orderWide=${orderWide}""")
+          val orderWide = OrderWideData(input.orderID, input.userID, orderProductID, input.pubID,
+            input.userMobile, input.userRegion, input.traffic, input.trafficGrade, input.trafficType,
+            input.price, input.fee, input.hasActivity,
+            input.adult, input.yonger, input.baby, input.ct,
+            productLevel, productType, toursimType, depCode, desCode)
 
-        val orderWides = List(orderWide)
+          val orderWides = List(orderWide)
 
-        resultFuture.complete(orderWides)
+          resultFuture.complete(orderWides)
+        } else {
+          val orderWide = OrderWideData(input.orderID, input.userID, orderProductID, input.pubID,
+            input.userMobile, input.userRegion, input.traffic, input.trafficGrade, input.trafficType,
+            input.price, input.fee, input.hasActivity,
+            input.adult, input.yonger, input.baby, input.ct,
+            -1, "-1","-1", "-1", "-1")
+          val orderWides = List(orderWide)
+
+          resultFuture.complete(orderWides)
+        }
       }catch {
         //注意：加入异常处理放置阻塞产生
         case ex: Exception => {
@@ -197,9 +210,9 @@ object QRealtimeCommFun {
     var pool :DBDruid = _
 
     //redis连接参数
-    val redisIP = "node11"
+    val redisIP = "hadoop01"
     val redisPort = 6379
-    val redisPass = "qfqf"
+    val redisPass = "root"
 
     //redis客户端连接
     var redisClient : RedisClient = _

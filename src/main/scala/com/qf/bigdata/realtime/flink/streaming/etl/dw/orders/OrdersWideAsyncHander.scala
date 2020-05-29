@@ -8,7 +8,7 @@ import com.qf.bigdata.realtime.flink.streaming.assigner.OrdersPeriodicAssigner
 import com.qf.bigdata.realtime.flink.streaming.funs.common.QRealtimeCommFun.{DBQuery, DimProductAsyncFunction, DimProductMAsyncFunction}
 import com.qf.bigdata.realtime.flink.streaming.funs.orders.OrdersETLFun._
 import com.qf.bigdata.realtime.flink.streaming.rdo.QRealtimeDO.{OrderDetailData, OrderMWideData, OrderWideData}
-import com.qf.bigdata.realtime.flink.streaming.schema.OrderWideKSchema
+import com.qf.bigdata.realtime.flink.streaming.schema.{OrderMWideKSchema, OrderWideKSchema}
 import com.qf.bigdata.realtime.flink.util.help.FlinkHelper
 import com.qf.bigdata.realtime.util.PropertyUtil
 import org.apache.flink.api.scala.createTypeInformation
@@ -64,7 +64,7 @@ object OrdersWideAsyncHander {
     * 旅游产品订单数据实时开窗聚合
     * 多维表处理:旅游产品维表+酒店维表
     */
-  def handleOrdersMWideAsyncJob(appName:String, groupID:String, fromTopic:String):Unit = {
+  def handleOrdersMWideAsyncJob(appName:String, groupID:String, fromTopic:String,toTopic:String):Unit = {
     try{
       /**
         * 1 Flink环境初始化
@@ -112,13 +112,29 @@ object OrdersWideAsyncHander {
       val asyncMulDS :DataStream[OrderMWideData] = AsyncDataStream.unorderedWait(orderDetailDStream, syncMFunc, QRealTimeConstant.DYNC_DBCONN_TIMEOUT, TimeUnit.MINUTES, QRealTimeConstant.DYNC_DBCONN_CAPACITY)
       asyncMulDS.print("asyncMulDS===>")
 
+      /**
+       * 5 数据流(如DataStream[OrderWideData])输出sink(如kafka、es等)
+       *   (1) kafka数据序列化处理 如OrderWideKSchema
+       *   (2) kafka生产者语义：AT_LEAST_ONCE 至少一次
+       *   (3) 设置kafka数据加入摄入时间 setWriteTimestampToKafka
+       */
+      val kafkaSerSchema = new OrderMWideKSchema(toTopic)
+      val kafkaProductConfig = PropertyUtil.readProperties(QRealTimeConstant.KAFKA_PRODUCER_CONFIG_URL)
+      val travelKafkaProducer = new FlinkKafkaProducer(
+        toTopic,
+        kafkaSerSchema,
+        kafkaProductConfig,
+        FlinkKafkaProducer.Semantic.AT_LEAST_ONCE)
+
+      travelKafkaProducer.setWriteTimestampToKafka(true)
+      asyncMulDS.addSink(travelKafkaProducer)
+
       env.execute(appName)
     }catch {
       case ex: Exception => {
         logger.error("OrdersWideAsyncHander.err:" + ex.getMessage)
       }
     }
-
   }
 
 
@@ -199,7 +215,6 @@ object OrdersWideAsyncHander {
     }
   }
 
-
   def main(args: Array[String]): Unit = {
     //应用程序名称
     val appName = "flink.OrdersWideAsyncHander"
@@ -209,17 +224,16 @@ object OrdersWideAsyncHander {
 
     //kafka数据源topic
     //val fromTopic = QRealTimeConstant.TOPIC_ORDER_ODS
-    val fromTopic = "test_ods"
+    val fromTopic = "travel_orders_ods"
 
     //kafka数据输出topic
     //val toTopic = QRealTimeConstant.TOPIC_ORDER_DW_WIDE
-    val toTopic = "test_dw"
-
+    val toTopic = "travel_dw_orderProductWide"
 
     //1 维表数据异步处理形成宽表
-    handleOrdersWideAsyncJob(appName, groupID, fromTopic, toTopic)
+    //handleOrdersWideAsyncJob(appName, groupID, fromTopic, toTopic)
 
     //2 多维表数据异步处理形成宽表
-    //handleOrdersMWideAsyncJob(appName, groupID, fromTopic)
+    handleOrdersMWideAsyncJob(appName, groupID, fromTopic,"travel_dw_orderMProPub")
   }
 }
