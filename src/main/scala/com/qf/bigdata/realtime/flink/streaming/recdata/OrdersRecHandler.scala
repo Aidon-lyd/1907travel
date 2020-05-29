@@ -182,7 +182,7 @@ object OrdersRecHandler {
 
     //行数据输出测试
     handleParquet2Hdfs("orderparquet2hdfs",
-      "travel_order_ods",
+      "travel_orders_ods",
       "logs-group-id3",
       "hdfs://hadoop01:9000/travle/orders_parquet/",
       60,

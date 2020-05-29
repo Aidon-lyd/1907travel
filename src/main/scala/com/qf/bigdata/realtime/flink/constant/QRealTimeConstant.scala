@@ -345,7 +345,6 @@ object QRealTimeConstant {
         |des_city_code,
         |toursim_tickets_type
         |from ${MYDQL_DIM_PRODUCT}
-        |limit 10
       """.stripMargin
 
 

@@ -66,6 +66,8 @@ class UserLogViewESSink(indexName:String) extends RichSinkFunction[UserLogPageVi
       .setDoc(res)
       .setUpsert(indexRequest)
       .get()
+
+    println(response.status().getStatus+"++++++++++"+indexName+"-"+indexType+"-"+sid)
     //查看更新状态
     if(response.status() != RestStatus.CREATED && response.status() != RestStatus.OK){
       logger.warn("this data wrtie error,data is:"+new ObjectMapper().writeValueAsString(res))
@@ -82,7 +84,7 @@ class UserLogViewESSink(indexName:String) extends RichSinkFunction[UserLogPageVi
       //对res数据做检测
       val checkRes:String = checkData(res)
       //检测数据没有问题就开始存储---如果空直接返回
-      if(StringUtils.isEmpty(checkRes)){
+      if(StringUtils.isNotEmpty(checkRes)){
         logger.warn("userLogViewData is null,data is :",checkRes)
         return
       }
@@ -91,6 +93,7 @@ class UserLogViewESSink(indexName:String) extends RichSinkFunction[UserLogPageVi
 
       //存储 /boook/jisuanji/007
       handleData(indexName,indexName,sid,res)
+      print("----------------------------"+sid)
     } catch {
       //case exception:Exception => exception.printStackTrace()
       case exception:Exception => logger.error(exception.getMessage)

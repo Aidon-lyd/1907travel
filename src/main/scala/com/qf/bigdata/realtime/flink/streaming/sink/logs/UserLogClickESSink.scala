@@ -74,9 +74,9 @@ class UserLogClickESSink(indexName:String) extends RichSinkFunction[UserLogClick
     //将数据转换成map形式
     val res: util.Map[String, AnyRef] = JsonUtil.gObject2Map(value)
     //对res数据做检测
-    val checkRes:String = checkData(res)
+    val checkRes:String = checkData(res) //res每条都有值，返回就是""
     //检测数据没有问题就开始存储---如果空直接返回
-    if(StringUtils.isEmpty(checkRes)){
+    if(StringUtils.isNotEmpty(checkRes)){
       logger.warn("userLogClickData is null,data is :",checkRes)
       return
     }

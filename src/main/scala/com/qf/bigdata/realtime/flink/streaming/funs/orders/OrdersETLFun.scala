@@ -76,7 +76,7 @@ object OrdersETLFun {
 
       OrderDetailData(orderID, userID, productID, pubID,
         userMobile, userRegion, traffic, trafficGrade, trafficType,
-        price, fee, hasActivity:String,
+        price, fee, hasActivity,
         adult, yonger, baby, ct)
     }
   }
@@ -167,7 +167,6 @@ object OrdersETLFun {
     //旅游产品维表数据收集器
     var products :Seq[ProductDimDO] = List[ProductDimDO]()
 
-
     /**
       * 函数初始化
       * @param parameters
@@ -188,6 +187,7 @@ object OrdersETLFun {
 
       //从产品订单实时数据中提取【产品ID】匹配广播维表数据
       val orderProductID :String = value.productID
+      //明细的product和产品维度表连接
       if(productBState.contains(orderProductID)){
         val productDimDO :ProductDimDO = productBState.get(orderProductID)
 
@@ -196,14 +196,13 @@ object OrdersETLFun {
         val toursimType = productDimDO.toursimType
         val depCode = productDimDO.depCode
         val desCode = productDimDO.desCode
-
+        //封装产品相关信息
         val orderWide = OrderWideData(value.orderID, value.userID, value.productID, value.pubID,
           value.userMobile, value.userRegion, value.traffic, value.trafficGrade, value.trafficType,
           value.price, value.fee, value.hasActivity,
           value.adult, value.yonger, value.baby, value.ct,
           productLevel, productType, toursimType, depCode, desCode)
-
-        //println(s"""orderWide=${JsonUtil.gObject2Json(orderWide)}""")
+        //输出
         out.collect(orderWide)
       }else{
         //对于未匹配上的实时数据需要有默认值进行补救处理
@@ -214,11 +213,10 @@ object OrdersETLFun {
           value.price, value.fee, value.hasActivity,
           value.adult, value.yonger, value.baby, value.ct,
           notMatch.toInt, notMatch, notMatch, notMatch, notMatch)
-        //println(s"""orderWide=${JsonUtil.gObject2Json(orderWide)}""")
+        //输出
         out.collect(orderWide)
       }
     }
-
 
     //广播维表数据收集
     override def processBroadcastElement(value: ProductDimDO, ctx: BroadcastProcessFunction[OrderDetailData, ProductDimDO, OrderWideData]#Context, out: Collector[OrderWideData]): Unit = {
@@ -229,8 +227,6 @@ object OrdersETLFun {
       productBState.put(key, value);
     }
   }
-
-
 
 
   /**
