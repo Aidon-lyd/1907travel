@@ -1,8 +1,8 @@
 package com.qf.bigdata.realtime.flink.constant
 
 /**
-  * 实时场景使用常量类
-  */
+ * 实时场景使用常量类
+ */
 object QRealTimeConstant {
 
   //常用常数
@@ -338,13 +338,13 @@ object QRealTimeConstant {
   val MYDQL_DIM_PRODUCT = "travel.dim_product1"
   val SQL_PRODUCT = s"""
         select
-        |product_id,
-        |product_level,
-        |product_type,
-        |departure_code,
-        |des_city_code,
-        |toursim_tickets_type
-        |from ${MYDQL_DIM_PRODUCT}
+                       |product_id,
+                       |product_level,
+                       |product_type,
+                       |departure_code,
+                       |des_city_code,
+                       |toursim_tickets_type
+                       |from ${MYDQL_DIM_PRODUCT}
       """.stripMargin
 
 
@@ -356,11 +356,11 @@ object QRealTimeConstant {
   val MYDQL_DIM_PUB = "travel.dim_pub1"
   val SQL_PUB = s"""
         select
-        |pub_id,
-        |pub_name,
-        |pub_star,
-        |pub_grade,
-        |is_national
+                   |pub_id,
+                   |pub_name,
+                   |pub_star,
+                   |pub_grade,
+                   |is_national
         from ${MYDQL_DIM_PUB}
       """.stripMargin
 

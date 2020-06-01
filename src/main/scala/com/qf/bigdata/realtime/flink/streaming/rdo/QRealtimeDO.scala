@@ -25,7 +25,7 @@ object QRealtimeDO {
    * 日志行为原数据封装
    */
   case class UserLogData(sid:String,userDevice:String,userDeviceType:String,
-                         os:String,userId:String,userRegion:String,longitude:String,
+                         os:String,userId:String,userRegion:String,userRegionIP:String,longitude:String,
                         latitude:String,manufacturer:String,carrier:String,networkType:String,
                          duration:String,exts:String,action:String,eventType:String,
                         ct:Long)
@@ -36,7 +36,7 @@ object QRealtimeDO {
 
   //用户行为浏览日志操作数据
   case class UserLogPageViewData(sid:String,userDevice:String,userDeviceType:String,
-                                 os:String,userId:String,userRegion:String,longitude:String,
+                                 os:String,userId:String,userRegion:String,userRegionIP:String,longitude:String,
                                  latitude:String,manufacturer:String,carrier:String,networkType:String,
                                  duration:String,action:String,eventType:String,
                                  ct:Long,targetId:String)

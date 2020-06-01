@@ -26,7 +26,7 @@ class UserLogViewDataMapFunc extends MapFunction[UserLogData,UserLogPageViewData
     }
     //封装成UserLogClickData
     UserLogPageViewData(value.sid,value.userDevice,value.userDeviceType,value.os,
-      value.userId,value.userRegion,value.longitude,value.latitude,value.manufacturer,
+      value.userId,value.userRegion,value.userRegionIP,value.longitude,value.latitude,value.manufacturer,
       value.carrier,value.networkType,value.duration,value.action,value.eventType,
       value.ct,targetID)
   }

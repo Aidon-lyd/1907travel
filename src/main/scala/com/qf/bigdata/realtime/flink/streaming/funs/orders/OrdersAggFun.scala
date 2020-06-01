@@ -626,6 +626,7 @@ object OrdersAggFun {
 
          val value = new OrderTrafficDimMeaData(productID, traffic, startWindowTime, endWindowTime,orders, totalFee)
          if(!topNContainer.isEmpty){
+           // 容器大小大于 > topN,,就要移除后面的数据(较小数据)
            if(topNContainer.size() >= topN){
              val first : OrderTrafficDimMeaData = topNContainer.first()
              val result = topNContainer.comparator().compare(first, value)

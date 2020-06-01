@@ -39,7 +39,7 @@ object OrdersDetailAggHandler {
       val watermarkInterval= QRealTimeConstant.FLINK_WATERMARK_INTERVAL
       val timeChar = TimeCharacteristic.EventTime
       val env: StreamExecutionEnvironment = FlinkHelper.createStreamingEnvironment(checkpointInterval, timeChar, watermarkInterval)
-
+      import org.apache.flink.api.scala._
       /**
         * 2 读取kafka旅游产品订单数据并形成订单实时数据流
         */
@@ -69,9 +69,10 @@ object OrdersDetailAggHandler {
         */
       val esDStream:DataStream[String] = aggDStream.map(
         (value : OrderDetailTimeAggDimMeaData) => {
-          val result :java.util.Map[String,Object] = JsonUtil.gObject2Map(value)
+          var result :java.util.Map[String,Object] = JsonUtil.gObject2Map(value)
           val eid = value.userRegion+QRealTimeConstant.BOTTOM_LINE+value.traffic
-          result +=(QRealTimeConstant.KEY_ES_ID -> eid)
+          //result += (QRealTimeConstant.KEY_ES_ID +":"+ eid)
+          result.put(QRealTimeConstant.KEY_ES_ID,eid)
           val json = JsonUtil.gObject2Json(result)
           json
         }

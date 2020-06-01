@@ -57,6 +57,7 @@ object OrdersAggCacheHandler {
        * (4) 允许数据延迟：allowedLateness
        * (5) 聚合计算方式：aggregate
        */
+        import org.apache.flink.api.scala._
       val aggDStream: DataStream[QKVBase] = orderDetailDStream
         .keyBy(
           (detail: OrderDetailData) => OrderDetailAggDimData(detail.userRegion, detail.traffic)
